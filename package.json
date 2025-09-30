@@ -1,13 +1,13 @@
 {
   "name": "mpc-utils",
-  "version": "0.0.95",
+  "version": "0.0.1",
   "description": "",
   "author": "Colossus",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
     "build": "tsc",
-    "start": "node dist/index.js",
+    "start": "tsc && node dist/index.js",
     "lint": "eslint \"src/**/*.ts\" --fix",
     "format": "prettier --write \"src/**/*.ts\"",
     "test": "jest",
@@ -56,10 +56,6 @@
       "**/*.(t|j)s"
     ],
     "coverageDirectory": "../coverage",
-    "testEnvironment": "node",
-    "moduleNameMapper": {
-      "^@/utils/(.*)$": "<rootDir>/utils/$1",
-      "^@/(.*)$": "<rootDir>/$1"
-    }
+    "testEnvironment": "node"
   }
 }

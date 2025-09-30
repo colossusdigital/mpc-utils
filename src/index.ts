@@ -1,12 +1,23 @@
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
-import { recombineCommand } from './commands/recombine';
-import { splitCommand } from './commands/split';
+import { recombineCommandCli } from './commands/recombine';
+import { splitCommandCli } from './commands/split';
+import { runInteractive } from './utils/interactive.utils';
 
-yargs(hideBin(process.argv))
-	.command(splitCommand)
-	.command(recombineCommand)
-	.demandCommand(1, 'You must specify a command: split or recombine')
-	.strict()
-	.help()
-	.parse();
+async function main() {
+	const argv = hideBin(process.argv);
+
+	if (argv.length === 0) {
+		await runInteractive();
+	} else {
+		yargs(argv)
+			.command(splitCommandCli)
+			.command(recombineCommandCli)
+			.demandCommand(1, "You must specify a function: 'split', 'recombine'")
+			.strict()
+			.help()
+			.parse();
+	}
+}
+
+main();

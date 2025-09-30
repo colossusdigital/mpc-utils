@@ -1,4 +1,4 @@
-import { errorExit } from '@/utils/error';
+import { errorExit } from './error';
 
 export function validateSplitArgs(sharesNum: number, threshold: number) {
 	if (threshold > sharesNum) {

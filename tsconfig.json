@@ -19,10 +19,6 @@
     "noFallthroughCasesInSwitch": false,
     "resolveJsonModule": true, // here is the important line, this will help VSCode to autocomplete and suggest quick-fixes
     "esModuleInterop": true,
-    "paths": {
-      "@/utils/*": ["src/utils/*"],
-      "@/*": ["*"]
-    }
   },
   "exclude": ["node_modules", "dist"]
 }

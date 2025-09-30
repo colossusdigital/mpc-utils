@@ -1,66 +1,90 @@
 import inquirer from 'inquirer';
 import { CommandModule } from 'yargs';
-import { SplitArgs } from '@/utils/types';
-import { validateSplitArgs } from '@/utils/validation';
+import { splitSecret } from '../shamir/shamir-functions';
+import { SplitArgs } from '../utils/types';
+import { responseSender } from '../utils/utils';
+import { validateSplitArgs } from '../utils/validation';
 
-export const splitCommand: CommandModule<any, SplitArgs> = {
+export const splitCommandCli: CommandModule<any, SplitArgs> = {
 	command: 'split',
 	describe: 'Split a secret into shares',
 	builder: yargs =>
 		yargs
-			.option('sharesNum', { alias: 's', type: 'number', description: 'Number of shares' })
-			.option('thresholdNum', {
+			.option('secret', {
+				alias: 'x',
+				type: 'string',
+				demandOption: true,
+				description: 'Secret to split',
+			})
+			.option('sharesNum', {
+				alias: 's',
+				type: 'number',
+				demandOption: true,
+				description: 'Number of shares',
+			})
+			.option('threshold', {
 				alias: 't',
 				type: 'number',
+				demandOption: true,
 				description: 'Threshold number of shares required to recombine',
 			})
 			.option('outputType', {
 				alias: 'o',
-				choices: ['json', 'text'] as const,
+				choices: ['json', 'file'] as const,
+				demandOption: true,
 				description: 'Output format',
 			})
-			.option('fileToSavePath', {
+			.option('filePath', {
 				alias: 'f',
 				type: 'string',
+				demandOption: false,
+				default: '',
 				description: 'Path to save output file',
 			}),
 	handler: async argv => {
-		let args = argv;
+		validateSplitArgs(argv.sharesNum!, argv.threshold!);
 
-		//TODO: Define usage and errors from cli to inquirer method. If flags not all provided send error ?
-		const answers = await inquirer.prompt([
-			{
-				type: 'number',
-				name: 'sharesNum',
-				message: 'Enter number of shares:',
-				when: () => !args.sharesNum,
-			},
-			{
-				type: 'number',
-				name: 'thresholdNum',
-				message: 'Enter threshold number:',
-				when: () => !args.thresholdNum,
-			},
-			{
-				type: 'list',
-				name: 'outputType',
-				message: 'Select output format:',
-				choices: ['json', 'text'],
-				when: () => !args.outputType,
-			},
-			{
-				type: 'input',
-				name: 'fileToSavePath',
-				message: 'Enter file path to save output:',
-				when: () => !args.fileToSavePath,
-			},
-		]);
+		const res: string[] = splitSecret(argv.secret, argv.sharesNum, argv.threshold);
 
-		args = { ...args, ...answers };
-
-		// Validation
-		validateSplitArgs(args.sharesNum!, args.threshold!);
-
-		// Place your actual split logic here
+		responseSender(argv.outputType, argv.filePath, res, 'share');
 	},
 };
+
+export async function splitCommandInteractive() {
+	const answers = await inquirer.prompt([
+		{
+			type: 'input',
+			name: 'secret',
+			message: 'Enter the secret to split:',
+		},
+		{
+			type: 'number',
+			name: 'sharesNum',
+			message: 'Enter number of shares:',
+		},
+		{
+			type: 'number',
+			name: 'threshold',
+			message: 'Enter threshold number:',
+		},
+		{
+			type: 'list',
+			name: 'outputType',
+			message: 'Select output format:',
+			choices: ['json', 'file'],
+		},
+		{
+			type: 'input',
+			name: 'filePath',
+			message: 'Enter file path to save output:',
+			default: '',
+			when: ans => ans.outputType === 'file',
+		},
+	]);
+
+	validateSplitArgs(answers.sharesNum!, answers.threshold!);
+
+	const res: string[] = splitSecret(answers.secret, answers.sharesNum, answers.threshold);
+
+	responseSender(answers.outputType, answers.filePath, res, 'share');
+}
