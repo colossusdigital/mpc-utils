@@ -18,15 +18,16 @@ export const recombineCommandCli: CommandModule<any, RecombineArgs> = {
 			.option('outputType', {
 				alias: 'o',
 				choices: ['json', 'file'] as const,
-				demandOption: true,
+				demandOption: false,
+				default: 'json',
 				description: 'Output format',
 			})
-			.option('filePath', {
+			.option('fileBasePath', {
 				alias: 'f',
 				type: 'string',
 				demandOption: false,
 				default: '',
-				description: 'Path to save output file',
+				description: 'Base path to save output file',
 			}),
 	handler: async argv => {
 		const args = {
@@ -36,7 +37,7 @@ export const recombineCommandCli: CommandModule<any, RecombineArgs> = {
 
 		const res: string = recombineShares(args.shares);
 
-		responseSender(args.outputType, args.filePath, res, 'recombined_secret.key');
+		responseSender(args.outputType, args.fileBasePath, res, 'recombined_secret.key');
 	},
 };
 
@@ -53,10 +54,11 @@ export async function recombineCommandInteractive() {
 			name: 'outputType',
 			message: 'Select output format:',
 			choices: ['json', 'file'],
+			default: 'json',
 		},
 		{
 			type: 'input',
-			name: 'filePath',
+			name: 'fileBasePath',
 			message: 'Enter file path to save output:',
 			default: '',
 			when: ans => ans.outputType === 'file',
@@ -65,5 +67,5 @@ export async function recombineCommandInteractive() {
 
 	const res: string = recombineShares(answers.shares);
 
-	responseSender(answers.outputType, answers.filePath, res, 'recombined_secret.key');
+	responseSender(answers.outputType, answers.fileBasePath, res, 'recombined_secret.key');
 }

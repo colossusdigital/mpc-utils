@@ -7,12 +7,15 @@
   "license": "UNLICENSED",
   "scripts": {
     "build": "tsc",
-    "start": "tsc && node dist/index.js",
+    "start": "node dist/index.js",
     "lint": "eslint \"src/**/*.ts\" --fix",
     "format": "prettier --write \"src/**/*.ts\"",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage"
+  },
+  "bin": {
+    "mpc-utils": "./dist/index.js"
   },
   "dependencies": {
     "class-transformer": "^0.5.1",

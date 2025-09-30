@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import { recombineCommandCli } from './commands/recombine';
@@ -11,11 +13,15 @@ async function main() {
 		await runInteractive();
 	} else {
 		yargs(argv)
+			.scriptName('mpc-utils')
+			.version()
+			.alias('v', 'version')
 			.command(splitCommandCli)
 			.command(recombineCommandCli)
 			.demandCommand(1, "You must specify a function: 'split', 'recombine'")
 			.strict()
 			.help()
+			.alias('h', 'help')
 			.parse();
 	}
 }

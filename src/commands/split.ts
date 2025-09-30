@@ -31,22 +31,23 @@ export const splitCommandCli: CommandModule<any, SplitArgs> = {
 			.option('outputType', {
 				alias: 'o',
 				choices: ['json', 'file'] as const,
-				demandOption: true,
+				demandOption: false,
+				default: 'json',
 				description: 'Output format',
 			})
-			.option('filePath', {
+			.option('fileBasePath', {
 				alias: 'f',
 				type: 'string',
 				demandOption: false,
 				default: '',
-				description: 'Path to save output file',
+				description: 'Base path to save output file',
 			}),
 	handler: async argv => {
 		validateSplitArgs(argv.sharesNum!, argv.threshold!);
 
 		const res: string[] = splitSecret(argv.secret, argv.sharesNum, argv.threshold);
 
-		responseSender(argv.outputType, argv.filePath, res, 'share');
+		responseSender(argv.outputType, argv.fileBasePath, res, 'share');
 	},
 };
 
@@ -71,11 +72,12 @@ export async function splitCommandInteractive() {
 			type: 'list',
 			name: 'outputType',
 			message: 'Select output format:',
+			default: 'json',
 			choices: ['json', 'file'],
 		},
 		{
 			type: 'input',
-			name: 'filePath',
+			name: 'fileBasePath',
 			message: 'Enter file path to save output:',
 			default: '',
 			when: ans => ans.outputType === 'file',
@@ -86,5 +88,5 @@ export async function splitCommandInteractive() {
 
 	const res: string[] = splitSecret(answers.secret, answers.sharesNum, answers.threshold);
 
-	responseSender(answers.outputType, answers.filePath, res, 'share');
+	responseSender(answers.outputType, answers.fileBasePath, res, 'share');
 }

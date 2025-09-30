@@ -3,11 +3,11 @@ export interface SplitArgs {
 	sharesNum?: number;
 	threshold?: number;
 	outputType?: 'json' | 'file';
-	filePath?: string;
+	fileBasePath?: string;
 }
 
 export interface RecombineArgs {
 	shares?: (string | number)[];
 	outputType?: 'json' | 'file';
-	filePath?: string;
+	fileBasePath?: string;
 }

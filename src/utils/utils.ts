@@ -13,29 +13,29 @@ export function writeToFile(filePath: string, content: any) {
 
 export function responseSender(
 	outputType: 'json' | 'file',
-	filePath: string = '',
+	fileBasePath: string = '',
 	content: string | string[],
 	filename: string,
 ) {
 	switch (outputType) {
 		case 'json':
-			console.log(content);
+			console.log('\n', content);
 			break;
 		case 'file':
-			if (filePath !== '') {
-				filePath = path.join(filePath, filename);
+			if (fileBasePath !== '') {
+				fileBasePath = path.join(fileBasePath, filename);
 			} else {
-				filePath = filename;
+				fileBasePath = filename;
 			}
 
 			if (Array.isArray(content)) {
 				content.forEach((item: string, index: number) => {
-					const indexedFilePath: string = `${filePath}_${index}.key`;
+					const indexedFilePath: string = `${fileBasePath}_${index}.key`;
 					writeToFile(indexedFilePath, item);
 					console.log('Share written to', indexedFilePath);
 				});
 			} else {
-				writeToFile(filePath, content);
+				writeToFile(fileBasePath, content);
 			}
 			break;
 	}
